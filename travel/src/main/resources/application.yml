@@ -7,7 +7,7 @@ spring:
       api-key: sk-ws-H.RPXRIPI.jdGH.MEUCIBgGKIg8gCNs_duNqGfIdFa57E2J3x4BlVtkCnnBcvP9AiEAuJGEu9bVXICE0F_FebMfq7HRM0hxFkwMXLzy7SAbC4k
       chat:
         options:
-          model: qwen-max
+          model: qwen3.7-max
 
     # MCP Server 配置（本应用作为 MCP Server）
     mcp:

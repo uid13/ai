@@ -11,7 +11,7 @@
 | Spring AI | 1.1.2 |
 | Spring AI Alibaba | 1.1.2.2 |
 | Gradle | 8.14.5 |
-| 模型 | 通义千问 qwen-max |
+| 模型 | 通义千问 qwen3.7-max |
 
 ## 架构设计
 
@@ -89,7 +89,7 @@ spring:
       api-key: ${DASHSCOPE_API_KEY}  # 百炼 API Key
       chat:
         options:
-          model: qwen-max            # 模型名称
+          model: qwen3.7-max         # 模型名称
     mcp:
       client:
         streamable-http:
