@@ -1,37 +1,32 @@
 spring:
+  profiles:
+    include: redis
   application:
     name: travel-assistant
   ai:
     # DashScope 模型配置
     dashscope:
-      api-key: sk-ws-H.RPXRIPI.jdGH.MEUCIBgGKIg8gCNs_duNqGfIdFa57E2J3x4BlVtkCnnBcvP9AiEAuJGEu9bVXICE0F_FebMfq7HRM0hxFkwMXLzy7SAbC4k
+      api-key: ENC(xfRpdB2LdWgooOxz0UUa6u3BHILnA3Y+rHfW3t9ehQEkP765JE8BSiRzRLHr72VdHyRNRTi7erdOT6uZyOa3bJplB6YhPkaGbx6lkOiDicv/Ne7E4lHnTexGtTtfB+0DxKmPmkPx/Whyg4UCq/jqzDJP4yHEQmPJo9gJmh23I8HnNS1YIfpawnOFo8co+xuzOU6xULgmezfJqYvyovZVJg==)
       chat:
         options:
           model: qwen3.7-max
 
-    # MCP Server 配置（本应用作为 MCP Server）
+    # MCP Client 配置（连接高德地图 MCP，消费其工具）
+    # 注意：由于 Spring AI 不支持 URL 查询参数，使用自定义 Transport
+    # @see https://github.com/spring-projects/spring-ai/issues/6505
     mcp:
-      server:
-        name: travel-assistant
-        version: 1.0.0
-        protocol: STREAMABLE
-        streamable-http:
-          mcp-endpoint: /stream
-
-      # MCP Client 配置（连接高德地图 MCP）
       client:
         enabled: true
-        name: travel-mcp-client
+        name: amap
         toolcallback:
           enabled: true
         type: sync
+        request-timeout: 60s
+        # 禁用自动配置的 streamable-http 连接，使用 CustomMcpTransportConfig 中的自定义 Bean
         streamable-http:
-          connections:
-            amap:
-              url: https://mcp.amap.com
-              endpoint: /mcp?key=82b2d2a597785ad4248bda8df8da38fa
+          connections: {}
 
-    # Nacos 注册配置
+    # Nacos Prompt 管理配置（获取 Agent 提示词）
     alibaba:
       mcp:
         nacos:
@@ -45,8 +40,14 @@ spring:
 server:
   port: 4081
 
-logging:
-  level:
-    com.uid13.travel: INFO
-    org.springframework.ai: INFO
-    com.alibaba.nacos: INFO
+# 高德地图 API Key（使用 Jasypt 加密）
+amap:
+  api:
+    key: ENC(OT3VskeThqJnK9k2NU6keXbMONv2dP0FVnn9ZiaIP6576P19nZ3WCl0W6a4A82B+YXL340VqL6Th6OlOnjpmF4LgXv4v55Lyzsm/v1L5PhY=)
+
+# Jasypt 加密配置
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}

@@ -1,12 +1,21 @@
 package com.uid13.travel.agent;
 
+import com.alibaba.cloud.ai.graph.agent.AgentTool;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
+import com.alibaba.cloud.ai.graph.checkpoint.savers.redis.RedisSaver;
+import com.uid13.travel.constant.AgentConstants;
+import com.uid13.travel.service.NacosPromptService;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 
 /**
  * 出行助手 Supervisor Agent（主管）
- * 负责理解用户意图，分发任务给子 Agent
+ * 负责理解用户意图，分发任务给子 Agent（如 TravelAgent）
+ *
+ * 多 Agent 编排架构：
+ * - Supervisor：接收用户请求，分析意图，决定是否调用子 Agent
+ * - TravelAgent：执行具体的出行规划任务（路线、POI、天气等）
+ * - Supervisor 通过 AgentTool 将 TravelAgent 注册为工具，实现动态调用
  *
  * @author uid13
  */
@@ -15,31 +24,19 @@ public class SupervisorAgent {
 
     private final ReactAgent agent;
 
-    public SupervisorAgent(ChatModel chatModel, TravelAgent travelAgent) {
+    public SupervisorAgent(ChatModel chatModel, TravelAgent travelAgent,
+                           NacosPromptService promptService, RedisSaver redisSaver) {
+        // 从 Nacos Prompt 管理获取提示词
+        String systemPrompt = promptService.getPrompt(AgentConstants.SUPERVISOR_AGENT_PROMPT);
+
+        // 将 TravelAgent 注册为子 Agent 工具，实现多 Agent 编排
+        // Supervisor 可以根据用户意图决定是否调用 TravelAgent
         this.agent = ReactAgent.builder()
-                .name("travel-supervisor")
+                .name(AgentConstants.SUPERVISOR_AGENT_NAME)
                 .model(chatModel)
-                .systemPrompt("""
-                        你是出行助手的主管，负责理解用户的出行需求并协调子 Agent 完成任务。
-                        
-                        你的职责：
-                        1. 理解用户意图（路线规划、地点搜索、天气查询等）
-                        2. 将任务分发给合适的子 Agent
-                        3. 整合子 Agent 的返回结果，给出最终回答
-                        
-                        子 Agent：
-                        - travel-agent: 出行规划专家，负责路线规划、POI 搜索、天气查询等
-                        
-                        工作流程：
-                        1. 分析用户需求
-                        2. 调用 travel-agent 执行具体任务
-                        3. 整合结果并返回给用户
-                        
-                        注意：
-                        - 如果用户需求不明确，请主动询问澄清
-                        - 返回结果要简洁、实用
-                        - 对于复杂需求，可以分解为多个子任务
-                        """)
+                .systemPrompt(systemPrompt)
+                .saver(redisSaver)
+                .tools(AgentTool.getFunctionToolCallback(travelAgent.getAgent()))
                 .build();
     }
 
