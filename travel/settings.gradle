@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url 'https://maven.aliyun.com/repository/spring/' }
@@ -18,3 +18,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'travel'
+
+include 'travel-common'
+include 'travel-agent'
+include 'travel-supervisor'

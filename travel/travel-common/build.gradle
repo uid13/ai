@@ -1,0 +1,16 @@
+// travel-common - 公共模块（纯 Java 库，无 Spring Boot）
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // 使用 api 配置，使依赖传递给消费者
+    api 'com.alibaba.cola:cola-component-dto:5.0.0'
+    
+    // Nacos AI SDK（用于 Prompt 管理）
+    api 'com.alibaba.nacos:nacos-client:3.2.2'
+    api "com.alibaba.cloud.ai:spring-ai-alibaba-starter-mcp-registry:${springAiExtensionsVersion}"
+    
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}

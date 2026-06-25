@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: travel-agent
+  ai:
+    dashscope:
+      api-key: ENC(xfRpdB2LdWgooOxz0UUa6u3BHILnA3Y+rHfW3t9ehQEkP765JE8BSiRzRLHr72VdHyRNRTi7erdOT6uZyOa3bJplB6YhPkaGbx6lkOiDicv/Ne7E4lHnTexGtTtfB+0DxKmPmkPx/Whyg4UCq/jqzDJP4yHEQmPJo9gJmh23I8HnNS1YIfpawnOFo8co+xuzOU6xULgmezfJqYvyovZVJg==)
+      chat:
+        options:
+          model: qwen3.7-max
+
+    # MCP Client 配置（连接高德地图 MCP，消费其工具）
+    # 注意：由于 Spring AI 不支持 URL 查询参数，使用自定义 Transport
+    # @see https://github.com/spring-projects/spring-ai/issues/6505
+    mcp:
+      client:
+        # 启用 MCP 客户端
+        enabled: true
+        toolcallback:
+          enabled: true
+        # 禁用 Spring AI 的自动配置连接，使用 CustomMcpTransportConfig
+        streamable-http:
+          connections: {}
+
+    # A2A 服务配置
+    a2a:
+      server:
+        enabled: true
+      service:
+        # 服务元数据
+        name: travel-agent
+        description: 出行规划 Agent,负责路线规划、POI 搜索、天气查询等具体任务
+        version: 1.0.0
+        # AgentCard 配置
+        card:
+          name: 出行规划专家
+          description: 专业的出行路线规划和景点推荐
+          skills:
+            - name: route-planning
+              description: 规划从起点到终点的出行路线
+              tags: [route, navigation]
+            - name: poi-search
+              description: 搜索周边兴趣点
+              tags: [poi, search]
+            - name: weather-query
+              description: 查询目的地天气信息
+              tags: [weather, query]
+          capabilities:
+            streaming: false
+            pushNotifications: false
+        # Nacos 注册中心配置
+        nacos:
+          serverAddr: 192.168.0.100:8848
+          namespace: public
+          username: nacos
+          password: nacos
+
+server:
+  port: 8082
+
+# 高德地图 API Key（使用 Jasypt 加密）
+amap:
+  api:
+    key: ENC(OT3VskeThqJnK9k2NU6keXbMONv2dP0FVnn9ZiaIP6576P19nZ3WCl0W6a4A82B+YXL340VqL6Th6OlOnjpmF4LgXv4v55Lyzsm/v1L5PhY=)
+
+# Jasypt 加密配置
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}

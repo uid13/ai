@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    include: redis
+  application:
+    name: travel-supervisor
+  ai:
+    # DashScope 模型配置
+    dashscope:
+      api-key: ENC(xfRpdB2LdWgooOxz0UUa6u3BHILnA3Y+rHfW3t9ehQEkP765JE8BSiRzRLHr72VdHyRNRTi7erdOT6uZyOa3bJplB6YhPkaGbx6lkOiDicv/Ne7E4lHnTexGtTtfB+0DxKmPmkPx/Whyg4UCq/jqzDJP4yHEQmPJo9gJmh23I8HnNS1YIfpawnOFo8co+xuzOU6xULgmezfJqYvyovZVJg==)
+      chat:
+        options:
+          model: qwen3.7-max
+
+    # A2A Nacos 发现配置
+    alibaba:
+      a2a:
+        nacos:
+          server-addr: 192.168.0.100:8848
+          username: nacos
+          password: nacos
+          discovery:
+            enabled: true
+      # Nacos Prompt 管理配置（获取 Agent 提示词）
+      mcp:
+        nacos:
+          server-addr: 192.168.0.100:8848
+          namespace: public
+          username: nacos
+          password: nacos
+
+server:
+  port: 8081
+
+# Jasypt 加密配置
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}

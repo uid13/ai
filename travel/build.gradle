@@ -1,77 +1,35 @@
+// 父项目 build.gradle - 公共配置
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.5.8'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.5.8' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
 }
 
-group = 'com.uid13'
-version = '1.0.0'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    group = 'com.uid13'
+    version = '1.0.0'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
 
-ext {
-    springAiVersion = '1.1.2'
-    springAiAlibabaVersion = '1.1.2.2'
-    springAiExtensionsVersion = '1.1.2.2'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-        mavenBom "com.alibaba.cloud.ai:spring-ai-alibaba-bom:${springAiAlibabaVersion}"
+    ext {
+        springAiVersion = '1.1.2'
+        springAiAlibabaVersion = '1.1.2.2'
+        springAiExtensionsVersion = '1.1.2.2'
+        lombokVersion = '1.18.30'
     }
-}
 
-dependencies {
-    // Spring AI Alibaba AgentScope - Multi-Agent 框架
-    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-agentscope'
-
-    // Spring AI DashScope - 通义千问模型
-    implementation "com.alibaba.cloud.ai:spring-ai-alibaba-starter-dashscope:${springAiAlibabaVersion}"
-
-    // Spring AI MCP Client - 连接远程 MCP Server（高德地图）
-    implementation 'org.springframework.ai:spring-ai-starter-mcp-client-webflux'
-
-    // Spring AI MCP Registry - Nacos 服务发现
-    implementation "com.alibaba.cloud.ai:spring-ai-alibaba-starter-mcp-registry:${springAiExtensionsVersion}"
-
-    // Spring AI MCP Annotations - MCP 资源注解
-    implementation 'org.springframework.ai:spring-ai-mcp-annotations:1.1.8'
-
-    // Nacos Client - 用于通过 AI SDK 获取 Prompt（3.2.0+ 包含 AI API）
-    implementation 'com.alibaba.nacos:nacos-client:3.2.2'
-
-    // COLA DTO - 标准化响应体
-    implementation 'com.alibaba.cola:cola-component-dto:5.0.0'
-
-    // Redisson - Redis 客户端，用于 Agent 状态持久化
-    implementation 'org.redisson:redisson:3.51.0'
-
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // Spring Boot Web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Jasypt Spring Boot - 配置属性加密
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:4.0.4'
-
-    // Testcontainers - Redis 容器
-    testImplementation 'org.testcontainers:testcontainers:1.21.2'
-    testImplementation 'org.testcontainers:junit-jupiter:1.21.2'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+            mavenBom "com.alibaba.cloud.ai:spring-ai-alibaba-bom:${springAiAlibabaVersion}"
+        }
+    }
 }
