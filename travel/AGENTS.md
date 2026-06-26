@@ -28,9 +28,9 @@ A2aRemoteAgent → TravelAgent (ReactAgent, travel-agent)
 
 | 角色 | 类名 | 模块 | 说明 |
 |------|------|------|------|
-| 主管 | `SupervisorAgent` | supervisor | 使用 `LlmRoutingAgent`，内置意图路由 |
+| 主管 | `SupervisorAgentConfig` | supervisor | 定义 LlmRoutingAgent + A2aRemoteAgent |
 | 子 Agent（远程） | `A2aRemoteAgent` | supervisor | 从 Nacos 发现远程 travel-agent |
-| 子 Agent（实现） | `TravelAgent` | agent | 使用 `ReactAgent`，调用 MCP 工具 |
+| 子 Agent（实现） | `TravelAgentConfig` | agent | 定义 ReactAgent，调用 MCP 工具 |
 | MCP 工具 | `CustomMcpTransportConfig` | agent | 解决 Spring AI URL 查询参数问题 |
 
 ### 多 Agent 编排机制
@@ -93,9 +93,9 @@ travel/
 │   └── src/main/
 │       ├── java/com/uid13/travel/agent/
 │       │   ├── TravelAgentApplication.java
-│       │   ├── TravelAgent.java          # ReactAgent
-│       │   └── config/CustomMcpTransportConfig.java
-│       └── resources/
+│       │   └── config/
+│       │       ├── CustomMcpTransportConfig.java
+│       │       └── TravelAgentConfig.java    # ReactAgent
 │           ├── application.yml
 │           └── logback-spring.xml
 ├── travel-supervisor/                    # A2A Client
@@ -104,11 +104,12 @@ travel/
 │       ├── main/
 │       │   ├── java/com/uid13/travel/supervisor/
 │       │   │   ├── SupervisorApplication.java
-│       │   │   ├── agent/SupervisorAgent.java      # LlmRoutingAgent
-│       │   │   ├── config/A2aAgentConfig.java      # A2A 远程 Agent 配置
-│       │   │   ├── config/GlobalExceptionHandler.java
-│       │   │   ├── config/RedisConfig.java
-│       │   │   └── controller/TravelController.java
+│       │   │   ├── config/
+│       │   │   │   ├── GlobalExceptionHandler.java
+│       │   │   │   ├── RedisConfig.java
+│       │   │   │   └── SupervisorAgentConfig.java  # LlmRoutingAgent + A2aRemoteAgent
+│       │   │   └── controller/
+│       │   │       └── TravelController.java
 │       │   └── resources/
 │       │       ├── application.yml
 │       │       ├── application-redis.yml

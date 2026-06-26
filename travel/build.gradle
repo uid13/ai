@@ -21,8 +21,8 @@ subprojects {
 
     ext {
         springAiVersion = '1.1.2'
-        springAiAlibabaVersion = '1.1.2.2'
-        springAiExtensionsVersion = '1.1.2.2'
+        springAiAlibabaVersion = '1.1.2.3'
+        springAiExtensionsVersion = '1.1.2.3'
         lombokVersion = '1.18.30'
     }
 

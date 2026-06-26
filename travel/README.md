@@ -60,9 +60,8 @@ sequenceDiagram
 | 模块 | 职责 | 关键类 |
 |------|------|--------|
 | travel-common | 公共模块 | AgentConstants, ChatDTO, HealthDTO, NacosPromptService |
-| travel-agent | A2A Server | TravelAgent, CustomMcpTransportConfig |
-| travel-supervisor | A2A Client | SupervisorAgent, TravelController, A2aAgentConfig |
-
+| travel-agent | A2A Server | TravelAgentConfig, CustomMcpTransportConfig |
+| travel-supervisor | A2A Client | TravelController, SupervisorAgentConfig |
 ### A2A 协议工作流程
 
 1. **启动阶段**：travel-agent 启动后注册到 Nacos Agent Registry，暴露 AgentCard
@@ -223,9 +222,8 @@ travel/
 │   └── src/main/
 │       ├── java/com/uid13/travel/agent/
 │       │   ├── TravelAgentApplication.java  # 启动类
-│       │   ├── TravelAgent.java             # 出行规划 Agent
 │       │   └── config/
-│       │       └── CustomMcpTransportConfig.java  # 自定义 MCP Transport
+│       │       ├── CustomMcpTransportConfig.java  # 自定义 MCP Transport
 │       └── resources/
 │           ├── application.yml              # 配置文件
 │           └── logback-spring.xml           # 日志配置
@@ -235,12 +233,10 @@ travel/
         ├── main/
         │   ├── java/com/uid13/travel/supervisor/
         │   │   ├── SupervisorApplication.java   # 启动类
-        │   │   ├── agent/
-        │   │   │   └── SupervisorAgent.java     # 主管 Agent（LlmRoutingAgent）
         │   │   ├── config/
-        │   │   │   ├── A2aAgentConfig.java      # A2A Agent 配置
         │   │   │   ├── GlobalExceptionHandler.java
-        │   │   │   └── RedisConfig.java
+        │   │   │   ├── RedisConfig.java
+        │   │   │   └── SupervisorAgentConfig.java  # LlmRoutingAgent + A2aRemoteAgent 配置
         │   │   └── controller/
         │   │       └── TravelController.java    # REST 控制器
         │   └── resources/

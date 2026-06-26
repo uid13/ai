@@ -1,4 +1,4 @@
-package com.uid13.travel.agent;
+package com.uid13.travel.agent.config;
 
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
 import com.uid13.travel.common.constant.AgentConstants;

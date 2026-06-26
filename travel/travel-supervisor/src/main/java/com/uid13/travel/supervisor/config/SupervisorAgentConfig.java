@@ -1,4 +1,4 @@
-package com.uid13.travel.supervisor.agent;
+package com.uid13.travel.supervisor.config;
 
 import com.alibaba.cloud.ai.graph.agent.a2a.A2aRemoteAgent;
 import com.alibaba.cloud.ai.graph.agent.a2a.AgentCardProvider;
