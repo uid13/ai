@@ -4,10 +4,11 @@ import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cola.dto.SingleResponse;
-import com.uid13.travel.supervisor.agent.SupervisorAgent;
+import com.uid13.travel.supervisor.agent.SupervisorAgentConfig;
 import com.uid13.travel.common.constant.AgentConstants;
 import com.uid13.travel.common.dto.ChatDTO;
 import com.uid13.travel.common.dto.HealthDTO;
+import com.alibaba.cloud.ai.graph.agent.flow.agent.LlmRoutingAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TravelController {
 
-    private final SupervisorAgent supervisorAgent;
+    private final LlmRoutingAgent supervisorAgent;
 
     /**
      * 聊天接口（支持多轮对话）
@@ -62,7 +63,7 @@ public class TravelController {
                     .build();
 
             // 调用 SupervisorAgent 处理请求
-            Optional<OverAllState> result = supervisorAgent.getAgent().invoke(userMsg, config);
+            Optional<OverAllState> result = supervisorAgent.invoke(userMsg, config);
 
             // 从状态中提取 AssistantMessage
             String responseText = "无响应";

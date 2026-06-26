@@ -1,4 +1,4 @@
-// travel-common - 公共模块（纯 Java 库，无 Spring Boot）
+// travel-common - 公共模块（纯 Java 库，Spring Context 支持）
 plugins {
     id 'java-library'
 }
@@ -9,8 +9,11 @@ dependencies {
     
     // Nacos AI SDK（用于 Prompt 管理）
     api 'com.alibaba.nacos:nacos-client:3.2.2'
-    api "com.alibaba.cloud.ai:spring-ai-alibaba-starter-mcp-registry:${springAiExtensionsVersion}"
+    
+    // Spring Boot（@Component、@ConfigurationProperties）
+    api 'org.springframework.boot:spring-boot-starter'
     
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }

@@ -21,38 +21,22 @@ spring:
         streamable-http:
           connections: {}
 
-    # A2A 服务配置
-    a2a:
-      server:
-        enabled: true
-      service:
-        # 服务元数据
-        name: travel-agent
-        description: 出行规划 Agent,负责路线规划、POI 搜索、天气查询等具体任务
-        version: 1.0.0
-        # AgentCard 配置
-        card:
-          name: 出行规划专家
-          description: 专业的出行路线规划和景点推荐
-          skills:
-            - name: route-planning
-              description: 规划从起点到终点的出行路线
-              tags: [route, navigation]
-            - name: poi-search
-              description: 搜索周边兴趣点
-              tags: [poi, search]
-            - name: weather-query
-              description: 查询目的地天气信息
-              tags: [weather, query]
-          capabilities:
-            streaming: false
-            pushNotifications: false
+    # A2A 配置（Nacos Agent 注册中心）
+    alibaba:
+      a2a:
+        # A2A Server 配置
+        server:
+          version: 1.0.0
+          card:
+            name: travel-agent
+            description: 出行规划专家，负责路线规划、POI 搜索、天气查询等
         # Nacos 注册中心配置
         nacos:
-          serverAddr: 192.168.0.100:8848
-          namespace: public
+          server-addr: 192.168.0.100:8848
           username: nacos
           password: nacos
+          registry:
+            enabled: true  # 启用服务注册（注册本地 Agent 到 Nacos）
 
 server:
   port: 8082
@@ -61,6 +45,14 @@ server:
 amap:
   api:
     key: ENC(OT3VskeThqJnK9k2NU6keXbMONv2dP0FVnn9ZiaIP6576P19nZ3WCl0W6a4A82B+YXL340VqL6Th6OlOnjpmF4LgXv4v55Lyzsm/v1L5PhY=)
+
+# Nacos Prompt 管理配置（AI 注册中心提示词获取，与 MCP 完全解耦）
+nacos:
+  prompt:
+    server-addr: 192.168.0.100:8848
+    namespace: public
+    username: nacos
+    password: nacos
 
 # Jasypt 加密配置
 jasypt:

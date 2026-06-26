@@ -1,12 +1,15 @@
 package com.uid13.travel.supervisor.agent;
 
 import com.alibaba.cloud.ai.graph.agent.a2a.A2aRemoteAgent;
+import com.alibaba.cloud.ai.graph.agent.a2a.AgentCardProvider;
 import com.alibaba.cloud.ai.graph.agent.flow.agent.LlmRoutingAgent;
 import com.uid13.travel.common.constant.AgentConstants;
 import com.uid13.travel.common.service.NacosPromptService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
@@ -22,33 +25,39 @@ import java.util.List;
  * @author uid13
  */
 @Slf4j
-@Component
-public class SupervisorAgent {
+@Configuration
+public class SupervisorAgentConfig {
 
-    private final LlmRoutingAgent agent;
+    /**
+     * 创建远程 TravelAgent
+     * 通过 AgentCardProvider 从 Nacos 自动发现 travel-agent 的 AgentCard
+     */
+    @Bean
+    public A2aRemoteAgent travelAgent(@Qualifier("nacosAgentCardProvider") AgentCardProvider agentCardProvider) {
+        return A2aRemoteAgent.builder()
+                .agentCardProvider(agentCardProvider)
+                .name(AgentConstants.TRAVEL_AGENT_NAME)
+                .description("出行规划专家，负责路线规划、POI 搜索、天气查询等")
+                .build();
+    }
 
-    public SupervisorAgent(ChatModel chatModel,
-                           A2aRemoteAgent travelAgent,
-                           NacosPromptService promptService) {
+    /**
+     * 创建 Supervisor Agent
+     */
+    @Bean
+    public LlmRoutingAgent supervisorAgent(ChatModel chatModel,
+                                           A2aRemoteAgent travelAgent,
+                                           NacosPromptService promptService) {
         // 从 Nacos Prompt 管理获取提示词
         String systemPrompt = promptService.getPrompt(AgentConstants.SUPERVISOR_AGENT_PROMPT);
 
         // 构建 LlmRoutingAgent 作为 Supervisor
         // 将远程 TravelAgent 注册为子 Agent
-        this.agent = LlmRoutingAgent.builder()
+        return LlmRoutingAgent.builder()
                 .name(AgentConstants.SUPERVISOR_AGENT_NAME)
                 .model(chatModel)
                 .systemPrompt(systemPrompt)
                 .subAgents(List.of(travelAgent))
                 .build();
-    }
-
-    /**
-     * 获取 Agent 实例
-     *
-     * @return LlmRoutingAgent
-     */
-    public LlmRoutingAgent getAgent() {
-        return agent;
     }
 }

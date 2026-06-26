@@ -11,7 +11,7 @@ spring:
         options:
           model: qwen3.7-max
 
-    # A2A Nacos 发现配置
+    # A2A Nacos 发现配置（Supervisor 作为 Client，只启用 Discovery）
     alibaba:
       a2a:
         nacos:
@@ -20,16 +20,19 @@ spring:
           password: nacos
           discovery:
             enabled: true
-      # Nacos Prompt 管理配置（获取 Agent 提示词）
-      mcp:
-        nacos:
-          server-addr: 192.168.0.100:8848
-          namespace: public
-          username: nacos
-          password: nacos
+          registry:
+            enabled: false  # Supervisor 不注册自己
 
 server:
   port: 8081
+
+# Nacos Prompt 管理配置（AI 注册中心提示词获取）
+nacos:
+  prompt:
+    server-addr: 192.168.0.100:8848
+    namespace: public
+    username: nacos
+    password: nacos
 
 # Jasypt 加密配置
 jasypt:

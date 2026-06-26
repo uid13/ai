@@ -1,11 +1,10 @@
 package com.uid13.travel.common.service;
 
-import com.alibaba.cloud.ai.mcp.nacos.NacosMcpProperties;
 import com.alibaba.nacos.api.ai.AiFactory;
 import com.alibaba.nacos.api.ai.AiService;
 import com.alibaba.nacos.api.ai.model.prompt.Prompt;
 import com.alibaba.nacos.api.exception.NacosException;
-import lombok.RequiredArgsConstructor;
+import com.uid13.travel.common.config.NacosPromptProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,21 +13,18 @@ import jakarta.annotation.PostConstruct;
 /**
  * Nacos Prompt 服务
  * 通过 Nacos AI SDK 从 AI 注册中心 Prompt 管理获取 Agent 提示词
- * 在多 Agent 编排中，为各 Agent 提供系统提示词
+ * 在多 Agent 编排中,为各 Agent 提供系统提示词
  *
  * @author uid13
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class NacosPromptService {
 
-    private final NacosMcpProperties nacosMcpProperties;
-    private AiService aiService;
+    private final AiService aiService;
 
-    @PostConstruct
-    public void init() throws NacosException {
-        this.aiService = AiFactory.createAiService(nacosMcpProperties.getNacosProperties());
+    public NacosPromptService(NacosPromptProperties nacosPromptProperties) throws NacosException {
+        this.aiService = AiFactory.createAiService(nacosPromptProperties.toNacosProperties());
     }
 
     /**
