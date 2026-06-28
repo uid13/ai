@@ -24,6 +24,7 @@ dependencies {
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     // Spring Boot Web
     implementation 'org.springframework.boot:spring-boot-starter-web'

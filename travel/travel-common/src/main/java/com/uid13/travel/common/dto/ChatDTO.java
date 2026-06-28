@@ -22,4 +22,7 @@ public class ChatDTO extends DTO {
 
     /** 会话 ID，用于多轮对话上下文关联 */
     private String threadId;
+
+    /** 消息角色（user / assistant） */
+    private String role;
 }

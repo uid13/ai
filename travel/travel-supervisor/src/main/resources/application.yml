@@ -10,6 +10,7 @@ spring:
       chat:
         options:
           model: qwen3.7-max
+      read-timeout: 600
 
     # A2A Nacos 发现配置（Supervisor 作为 Client，只启用 Discovery）
     alibaba:

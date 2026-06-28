@@ -1,6 +1,7 @@
 package com.uid13.travel.supervisor.config;
 
 import com.alibaba.cloud.ai.graph.agent.a2a.A2aRemoteAgent;
+import com.alibaba.cloud.ai.graph.checkpoint.savers.redis.RedisSaver;
 import com.alibaba.cloud.ai.graph.agent.a2a.AgentCardProvider;
 import com.alibaba.cloud.ai.graph.agent.flow.agent.LlmRoutingAgent;
 import com.uid13.travel.common.constant.AgentConstants;
@@ -47,7 +48,8 @@ public class SupervisorAgentConfig {
     @Bean
     public LlmRoutingAgent supervisorAgent(ChatModel chatModel,
                                            A2aRemoteAgent travelAgent,
-                                           NacosPromptService promptService) {
+                                           NacosPromptService promptService,
+                                           RedisSaver redisSaver) {
         // 从 Nacos Prompt 管理获取提示词
         String systemPrompt = promptService.getPrompt(AgentConstants.SUPERVISOR_AGENT_PROMPT);
 
@@ -58,6 +60,7 @@ public class SupervisorAgentConfig {
                 .model(chatModel)
                 .systemPrompt(systemPrompt)
                 .subAgents(List.of(travelAgent))
+                .saver(redisSaver)
                 .build();
     }
 }

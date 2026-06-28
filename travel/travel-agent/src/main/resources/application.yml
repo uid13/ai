@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: redis
   application:
     name: travel-agent
   ai:
@@ -7,6 +9,7 @@ spring:
       chat:
         options:
           model: qwen3.7-max
+      read-timeout: 600
 
     # MCP Client 配置（连接高德地图 MCP，消费其工具）
     # 注意：由于 Spring AI 不支持 URL 查询参数，使用自定义 Transport
@@ -15,6 +18,7 @@ spring:
       client:
         # 启用 MCP 客户端
         enabled: true
+        request-timeout: 600s
         toolcallback:
           enabled: true
         # 禁用 Spring AI 的自动配置连接，使用 CustomMcpTransportConfig
@@ -60,3 +64,5 @@ jasypt:
     algorithm: PBEWITHHMACSHA512ANDAES_256
     iv-generator-classname: org.jasypt.iv.RandomIvGenerator
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+spring.main.allow-bean-definition-overriding: true

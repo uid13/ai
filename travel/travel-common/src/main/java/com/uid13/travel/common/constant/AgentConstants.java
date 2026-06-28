@@ -37,4 +37,16 @@ public final class AgentConstants {
      * 主管 Agent 提示词 Key
      */
     public static final String SUPERVISOR_AGENT_PROMPT = "supervisor-agent-prompt";
+
+    // ==================== Agent State Key ====================
+
+    /** Agent 执行结果输出 key（A2aRemoteAgent 默认 outputKey） */
+    public static final String AGENT_OUTPUT_KEY = "output";
+
+    // ==================== State Key ====================
+
+    /** 对话历史 key（框架内置，用于积累 UserMessage / AssistantMessage 列表） */
+    public static final String MESSAGES_KEY = "messages";
+
+
 }

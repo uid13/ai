@@ -1,6 +1,7 @@
 package com.uid13.travel.supervisor.controller;
 
 import com.alibaba.cloud.ai.graph.OverAllState;
+import com.alibaba.cloud.ai.graph.state.StateSnapshot;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.exception.GraphRunnerException;
 import com.alibaba.cola.dto.SingleResponse;
@@ -11,9 +12,11 @@ import com.uid13.travel.common.dto.HealthDTO;
 import com.alibaba.cloud.ai.graph.agent.flow.agent.LlmRoutingAgent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,27 +68,16 @@ public class TravelController {
             // 调用 SupervisorAgent 处理请求
             Optional<OverAllState> result = supervisorAgent.invoke(userMsg, config);
 
-            // 从状态中提取 AssistantMessage
-            String responseText = "无响应";
-            if (result.isPresent()) {
-                OverAllState state = result.get();
-                Optional<Object> messagesOpt = state.value("messages");
-                if (messagesOpt.isPresent() && messagesOpt.get() instanceof List) {
-                    List<?> messages = (List<?>) messagesOpt.get();
-                    // 倒序遍历，取最后一个 AssistantMessage
-                    for (int i = messages.size() - 1; i >= 0; i--) {
-                        Object msg = messages.get(i);
-                        if (msg instanceof AssistantMessage assistantMsg) {
-                            responseText = assistantMsg.getText();
-                            break;
-                        }
-                    }
-                }
-            }
+            // 从状态中提取 Agent 输出（A2aRemoteAgent 默认 outputKey = "output"）
+            String responseText = result
+                    .flatMap(state -> state.value(AgentConstants.AGENT_OUTPUT_KEY))
+                    .map(Object::toString)
+                    .orElse("无响应");
 
             ChatDTO chatDTO = new ChatDTO();
             chatDTO.setMessage(responseText);
             chatDTO.setAgent(AgentConstants.SUPERVISOR_AGENT_NAME);
+            chatDTO.setRole(MessageType.ASSISTANT.getValue());
             chatDTO.setThreadId(threadId);
 
             return SingleResponse.of(chatDTO);
@@ -107,5 +99,58 @@ public class TravelController {
         healthDTO.setVersion("1.0.0");
 
         return SingleResponse.of(healthDTO);
+    }
+
+    /**
+     * 获取会话历史消息
+     * 从 Redis checkpoint 中读取当前 threadId 的完整消息列表
+     *
+     * @param threadId 会话 ID（必填）
+     * @return COLA 标准化响应，包含消息列表
+     */
+    @GetMapping("/chat/history")
+    public SingleResponse<List<ChatDTO>> chatHistory(@RequestParam String threadId) {
+        if (threadId == null || threadId.isBlank()) {
+            return SingleResponse.buildFailure("PARAM_ERROR", "threadId 不能为空");
+        }
+
+        try {
+            RunnableConfig config = RunnableConfig.builder()
+                    .threadId(threadId)
+                    .build();
+
+            // 从 Redis 加载 state，不重新执行 Agent
+            StateSnapshot snapshot = supervisorAgent.getCurrentState(config);
+            OverAllState state = snapshot.state();
+            Optional<Object> messagesOpt = state.value(AgentConstants.MESSAGES_KEY);
+
+            if (messagesOpt.isEmpty() || !(messagesOpt.get() instanceof List)) {
+                return SingleResponse.of(List.of());
+            }
+
+            List<?> messages = (List<?>) messagesOpt.get();
+            List<ChatDTO> history = new ArrayList<>();
+
+            for (Object msg : messages) {
+                if (msg instanceof UserMessage userMsg) {
+                    ChatDTO dto = new ChatDTO();
+                    dto.setMessage(userMsg.getText());
+                    dto.setRole(MessageType.USER.getValue());
+                    dto.setThreadId(threadId);
+                    history.add(dto);
+                } else if (msg instanceof AssistantMessage assistantMsg) {
+                    ChatDTO dto = new ChatDTO();
+                    dto.setMessage(assistantMsg.getText());
+                    dto.setAgent(AgentConstants.SUPERVISOR_AGENT_NAME);
+                    dto.setRole(MessageType.ASSISTANT.getValue());
+                    dto.setThreadId(threadId);
+                    history.add(dto);
+                }
+            }
+
+            return SingleResponse.of(history);
+        } catch (Exception e) {
+            return SingleResponse.buildFailure("STATE_ERROR", "获取历史消息失败：" + e.getMessage());
+        }
     }
 }
