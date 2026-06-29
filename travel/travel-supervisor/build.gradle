@@ -15,6 +15,9 @@ dependencies {
     // Spring AI Alibaba AgentScope
     implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-agentscope'
 
+    // Spring AI Alibaba Studio（嵌入式 Chat UI 调试界面）
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-studio'
+
     // Nacos MCP Registry（用于 Prompt 管理）
     implementation "com.alibaba.cloud.ai:spring-ai-alibaba-starter-mcp-registry:${springAiExtensionsVersion}"
 
