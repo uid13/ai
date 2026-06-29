@@ -3,6 +3,9 @@ spring:
     include: redis
   application:
     name: travel-supervisor
+  autoconfigure:
+    exclude:
+      - com.alibaba.cloud.ai.autoconfigure.dashscope.DashScopeChatAutoConfiguration
   ai:
     # DashScope 模型配置
     dashscope:

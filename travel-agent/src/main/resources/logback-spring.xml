@@ -11,31 +11,50 @@
         </encoder>
     </appender>
 
+    <!-- 文件输出 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/travel-supervisor.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/travel-supervisor.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
     <!-- 开发环境：DEBUG 级别 -->
     <springProfile name="dev">
         <!-- 应用日志级别 -->
         <logger name="com.uid13.travel" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Spring AI 日志 -->
         <logger name="org.springframework.ai" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- MCP Client 日志 -->
         <logger name="io.modelcontextprotocol" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Nacos 日志 -->
         <logger name="com.alibaba.nacos" level="INFO" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Jasypt 日志 -->
         <logger name="com.ulisesbocchio.jasyptspringboot" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
     </springProfile>
 
@@ -44,31 +63,37 @@
         <!-- 应用日志级别 -->
         <logger name="com.uid13.travel" level="INFO" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Spring AI 日志 -->
         <logger name="org.springframework.ai" level="WARN" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- MCP Client 日志 -->
         <logger name="io.modelcontextprotocol" level="INFO" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Nacos 日志 -->
         <logger name="com.alibaba.nacos" level="WARN" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Jasypt 日志 -->
         <logger name="com.ulisesbocchio.jasyptspringboot" level="WARN" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
     </springProfile>
 
     <!-- 根日志级别 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>
