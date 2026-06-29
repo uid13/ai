@@ -1,0 +1,68 @@
+spring:
+  profiles:
+    include: redis
+  application:
+    name: travel-agent
+  ai:
+    dashscope:
+      api-key: ENC(xfRpdB2LdWgooOxz0UUa6u3BHILnA3Y+rHfW3t9ehQEkP765JE8BSiRzRLHr72VdHyRNRTi7erdOT6uZyOa3bJplB6YhPkaGbx6lkOiDicv/Ne7E4lHnTexGtTtfB+0DxKmPmkPx/Whyg4UCq/jqzDJP4yHEQmPJo9gJmh23I8HnNS1YIfpawnOFo8co+xuzOU6xULgmezfJqYvyovZVJg==)
+      chat:
+        options:
+          model: qwen3.7-max
+      read-timeout: 600
+
+    # MCP Client 配置（连接高德地图 MCP，消费其工具）
+    # 注意：由于 Spring AI 不支持 URL 查询参数，使用自定义 Transport
+    # @see https://github.com/spring-projects/spring-ai/issues/6505
+    mcp:
+      client:
+        # 启用 MCP 客户端
+        enabled: true
+        request-timeout: 600s
+        toolcallback:
+          enabled: true
+        # 禁用 Spring AI 的自动配置连接，使用 CustomMcpTransportConfig
+        streamable-http:
+          connections: {}
+
+    # A2A 配置（Nacos Agent 注册中心）
+    alibaba:
+      a2a:
+        # A2A Server 配置
+        server:
+          version: 1.0.0
+          card:
+            name: travel-agent
+            description: 出行规划专家，负责路线规划、POI 搜索、天气查询等
+        # Nacos 注册中心配置
+        nacos:
+          server-addr: 192.168.0.100:8848
+          username: nacos
+          password: nacos
+          registry:
+            enabled: true  # 启用服务注册（注册本地 Agent 到 Nacos）
+
+server:
+  port: 8082
+
+# 高德地图 API Key（使用 Jasypt 加密）
+amap:
+  api:
+    key: ENC(OT3VskeThqJnK9k2NU6keXbMONv2dP0FVnn9ZiaIP6576P19nZ3WCl0W6a4A82B+YXL340VqL6Th6OlOnjpmF4LgXv4v55Lyzsm/v1L5PhY=)
+
+# Nacos Prompt 管理配置（AI 注册中心提示词获取，与 MCP 完全解耦）
+nacos:
+  prompt:
+    server-addr: 192.168.0.100:8848
+    namespace: public
+    username: nacos
+    password: nacos
+
+# Jasypt 加密配置
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+spring.main.allow-bean-definition-overriding: true
