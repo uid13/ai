@@ -1,0 +1,60 @@
+// demo-agent - Spring AI Alibaba 多智能体混合架构演示项目
+// 使用 Java 21 + Gradle (Groovy) + 阿里云镜像 + DeepSeek 模型
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.8'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.uid13'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// 版本属性
+ext {
+    springAiVersion = '1.1.2'
+    springAiAlibabaVersion = '1.1.2.2'
+    colaVersion = '5.0.0'
+}
+
+dependencyManagement {
+    imports {
+        // Spring AI BOM
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+        // Spring AI Alibaba BOM (管理 agentscope 版本)
+        mavenBom "com.alibaba.cloud.ai:spring-ai-alibaba-bom:${springAiAlibabaVersion}"
+    }
+}
+
+dependencies {
+    // Spring Boot Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring AI OpenAI Compatible (用于接入 DeepSeek)
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // Spring AI Alibaba AgentScope (多智能体框架)
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-agentscope'
+
+    // Alibaba COLA DTO + Exception (统一响应封装 + 异常定义)
+    implementation "com.alibaba.cola:cola-component-dto:${colaVersion}"
+    implementation "com.alibaba.cola:cola-component-exception:${colaVersion}"
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 测试
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
