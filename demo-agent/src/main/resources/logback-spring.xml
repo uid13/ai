@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志目录 -->
-    <property name="LOG_DIR" value="logs/demo-agent"/>
-    <property name="LOG_FILE" value="demo"/>
+    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_FILE" value="demo-agent"/>
 
     <!-- 控制台 Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

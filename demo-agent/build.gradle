@@ -1,6 +1,3 @@
-// demo-agent - Spring AI Alibaba 多智能体混合架构演示项目
-// 使用 Java 21 + Gradle (Groovy) + 阿里云镜像 + DeepSeek 模型
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.8'
@@ -41,6 +38,9 @@ dependencies {
 
     // Spring AI Alibaba AgentScope (多智能体框架)
     implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-starter-agentscope'
+
+    // Spring AI Alibaba Studio（嵌入式 Chat UI 调试界面）
+    implementation 'com.alibaba.cloud.ai:spring-ai-alibaba-studio'
 
     // Alibaba COLA DTO + Exception (统一响应封装 + 异常定义)
     implementation "com.alibaba.cola:cola-component-dto:${colaVersion}"
