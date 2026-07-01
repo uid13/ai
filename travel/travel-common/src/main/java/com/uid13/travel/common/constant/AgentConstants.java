@@ -1,5 +1,7 @@
 package com.uid13.travel.common.constant;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Agent 常量定义
  * 集中管理多 Agent 编排中的 Agent 名称和 Nacos Prompt Key

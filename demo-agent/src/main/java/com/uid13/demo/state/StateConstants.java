@@ -1,13 +1,17 @@
 package com.uid13.demo.state;
 
+import com.alibaba.cloud.ai.graph.OverAllState;
+import com.alibaba.cloud.ai.graph.StateGraph;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * 状态键常量 - 定义 StateGraph 中使用的状态键和 Agent 名称
  *
  * 参考官方示例：AgentScopeStateConstants
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StateConstants {
-
-    private StateConstants() {}
 
     // ==================== 状态键 ====================
 
@@ -15,7 +19,7 @@ public final class StateConstants {
     public static final String ACTIVE_AGENT = "active_agent";
 
     /** 用户输入消息 */
-    public static final String INPUT = "input";
+    public static final String INPUT = OverAllState.DEFAULT_INPUT_KEY;
 
     /** 最终响应结果 */
     public static final String RESULT = "result";
@@ -35,5 +39,5 @@ public final class StateConstants {
     public static final String CHAT_AGENT = "chat_agent";
 
     /** 结束标识（与 StateGraph.END 对应） */
-    public static final String END = "__END__";
+    public static final String END = StateGraph.END;
 }
